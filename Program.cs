@@ -12,10 +12,21 @@ namespace Text_Based_Adventure_Game
         #region GlobalVariables
         static bool inMenu = true;
         static bool playing = true;
+        static string dogAscii = @"            |\_/|        D\___/\
+            (0_0)         (0_o)
+           ==(Y)==         (V)
+----------(u)---(u)----oOo--U--oOo---
+__|_______|_______|_______|_______|___";
         #endregion
         static void Main(string[] args)
         {
+            //Console.WriteLine(dogAscii);
+            //Console.ReadLine();
             SetTitle("Starting...");
+            #region Debugging
+            //Console.WriteLine($"inMenu: {inMenu}");
+            //Console.ReadKey();
+            #endregion
             do
             {
                 MainMenu();
@@ -67,11 +78,9 @@ namespace Text_Based_Adventure_Game
             switch ((char) keyPress)
             {
                 case 'A':
-                    inMenu = false;
                     Play();
                     return;
                 case 'B':
-                    inMenu = false;
                     Options();
                     return;
                 case 'E':
@@ -87,7 +96,12 @@ namespace Text_Based_Adventure_Game
         {
             Console.Clear();
             SetTitle("Playing");
+            //Console.WriteLine(dogAscii);
+            //Console.ForegroundColor = ConsoleColor.Blue;
+            //Type("Welcome to the game", 20);
+            Console.ResetColor();
             WriteMiddle("t20", "Blue", "Welcome to the game");
+            Console.WriteLine(dogAscii);
             Console.ReadKey();
         }
         static void Options()
