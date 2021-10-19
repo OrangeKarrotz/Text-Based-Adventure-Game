@@ -216,7 +216,8 @@ __|_______|_______|_______|_______|___";
                     Console.WriteLine(title[current]);
                     previous = current;
 
-                    Spacing(1);
+                    //Spacing(1);
+                    Console.SetCursorPosition(0, 15);
                     Console.ResetColor();
                     Console.WriteLine("Please choose a valid option:");
                     #region Commented
@@ -255,6 +256,11 @@ __|_______|_______|_______|_______|___";
                     WriteMiddle("t50", "Red", "ERROR: INVALID INPUT");
                     return;
             }
+        }
+        static void Game(string userJob, string userName, int userMorals)
+        {
+            string userMoralStr;
+
         }
         static void Setup()
         {
@@ -298,6 +304,7 @@ __|_______|_______|_______|_______|___";
                 } while (!int.TryParse(Console.ReadLine(), out userMorals));
             } while (userMorals > 17 || userMorals < 1) ;
 
+            Game(userJob, userName, userMorals);
             //Console.ReadKey();
         }
         static void Options()
