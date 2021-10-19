@@ -185,7 +185,7 @@ __|_______|_______|_______|_______|___";
             switch ((char) keyPress)
             {
                 case 'A':
-                    Play();
+                    Setup();
                     return;
                 case 'B':
                     Options();
@@ -243,7 +243,7 @@ __|_______|_______|_______|_______|___";
             switch ((char)keyPress)
             {
                 case 'A':
-                    Play();
+                    Setup();
                     return;
                 case 'B':
                     Options();
@@ -256,28 +256,49 @@ __|_______|_______|_______|_______|___";
                     return;
             }
         }
-        static void Play()
+        static void Setup()
         {
+            int userMorals;
             Console.Clear();
             SetTitle("Playing");
-            //Console.WriteLine(dogAscii);
-            //Console.ForegroundColor = ConsoleColor.Blue;
-            //Type("Welcome to the game", 20);
             Console.ResetColor();
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine(title[0]);
             Console.ResetColor();
-            Type("Welcome to the game!");
-            Thread.Sleep(1000);
-            Type("It really is a game!");
-            Thread.Sleep(1000);
-            Type("Woah! It looks like you're about to meet our dogs!");
-            Thread.Sleep(250);
-            Console.WriteLine(dogAscii);
-            Type("I wish you could understand how glad I am we have a warrior like you in our village! We've been having a wee bit of trouble with the other hounds!");
-            Thread.Sleep(500);
-            Type("You're probably wondering who I am... Well I am your guide! Phil!");
-            Console.ReadKey();
+            Type("Hello!");
+            Wait(500);
+            Type("This is a text based adventure game.");
+            Console.WriteLine("\nBackstory:");
+            Type2("You could be anything... ", 50);
+            Wait(500);
+            Type("Possibly a...", 50);
+            Type2("Warrior, ");
+            Wait(1000);
+            Type2("Weapons Smith, ");
+            Wait(1000);
+            Type2("Archer");
+            Type("...", 250);
+            Wait(1000);
+            Type2("What are you? A(n): ");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            string userJob = Console.ReadLine();
+            Console.ResetColor();
+            Wait(1000);
+            Type2($"And what's your name, my good {userJob}?");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            string userName = Console.ReadLine();
+            Console.ResetColor();
+            do
+            {
+                do
+                {
+                    Console.ResetColor();
+                    Type($"And how do you see yourself morally, {userName}, on a scale of 1-17 (1 being evil, 17 being a hero)? (this will affect how NPC's interact with you)");
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                } while (!int.TryParse(Console.ReadLine(), out userMorals));
+            } while (userMorals > 17 || userMorals < 1) ;
+
+            //Console.ReadKey();
         }
         static void Options()
         {
@@ -315,6 +336,14 @@ __|_______|_______|_______|_______|___";
             {
                 if (i == args.Length-1) Console.WriteLine(args[i]);
                 else Console.Write(args[i]);
+                Thread.Sleep(delay);
+            }
+        }
+        static void Type2(string args, int delay = 20)
+        {
+            for (int i = 0; i < args.Length; i++)
+            {
+                Console.Write(args[i]);
                 Thread.Sleep(delay);
             }
         }
@@ -390,6 +419,10 @@ __|_______|_______|_______|_______|___";
             int windowHeight = Console.WindowHeight;
             Spacing((windowHeight / 2) - 1);
             WriteMiddle(type, colour, output);
+        }
+        static void Wait(int delay)
+        {
+            Thread.Sleep(delay);
         }
     }
 }
