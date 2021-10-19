@@ -257,11 +257,20 @@ __|_______|_______|_______|_______|___";
                     return;
             }
         }
-        static void Game(string userJob, string userName, int userMorals)
-        {
-            string userMoralStr;
-
-        }
+        //static void Game(string userJob, string userName, int userMorals)
+        //{
+        //    Random rnd = new Random();
+        //    int yearsExperience = rnd.Next(0, 30);
+        //    if (userMorals < 7)
+        //    Console.Clear();
+        //    Console.WriteLine(title[0]);
+        //    Console.SetCursorPosition(0, 15);
+        //    Type2("Welcome to the game, ");
+        //    Wait(500);
+        //    Type($"{userName}!");
+        //    if (yearsExperience == 0 ||) Type($"You are a(n) {userJob}, you've been working in Bellmoral for less than a year, and are still getting to grips with the town.");
+        //    else Type($"You are a(n) {userJob}, you've been working in Bellmoral for around {yearsExperience} year(s). You feel like you've settled in");
+        //}
         static void Setup()
         {
             int userMorals;
@@ -290,7 +299,7 @@ __|_______|_______|_______|_______|___";
             string userJob = Console.ReadLine();
             Console.ResetColor();
             Wait(1000);
-            Type2($"And what's your name, my good {userJob}?");
+            Type3(new string[] { $"And what's your name, my good ", $"{userJob}", "? "}, 20, new string[] { "Gray", "Yellow", "Gray" });
             Console.ForegroundColor = ConsoleColor.Yellow;
             string userName = Console.ReadLine();
             Console.ResetColor();
@@ -304,7 +313,7 @@ __|_______|_______|_______|_______|___";
                 } while (!int.TryParse(Console.ReadLine(), out userMorals));
             } while (userMorals > 17 || userMorals < 1) ;
 
-            Game(userJob, userName, userMorals);
+            //Game(userJob, userName, userMorals);
             //Console.ReadKey();
         }
         static void Options()
@@ -337,8 +346,9 @@ __|_______|_______|_______|_______|___";
                     return;
             }
         }
-        static void Type(string args, int delay = 20)
+        static void Type(string args, int delay = 20, string colour = "Gray")
         {
+            Console.ForegroundColor = (ConsoleColor)Enum.Parse(typeof(ConsoleColor), colour);
             for (int i = 0; i < args.Length; i++)
             {
                 if (i == args.Length-1) Console.WriteLine(args[i]);
@@ -346,12 +356,21 @@ __|_______|_______|_______|_______|___";
                 Thread.Sleep(delay);
             }
         }
-        static void Type2(string args, int delay = 20)
+        static void Type2(string args, int delay = 20, string colour = "Gray")
         {
+            Console.ForegroundColor = (ConsoleColor)Enum.Parse(typeof(ConsoleColor), colour);
             for (int i = 0; i < args.Length; i++)
             {
                 Console.Write(args[i]);
                 Thread.Sleep(delay);
+            }
+        }
+        static void Type3(string[] args, int delay = 20, string[] colour = null)
+        {
+            colour = colour ?? new string[] { "Gray" };
+            for (int i = 0; i < args.Length; i++)
+            {
+                Type2(args[i], delay, colour[i]);
             }
         }
         static void Exit()
