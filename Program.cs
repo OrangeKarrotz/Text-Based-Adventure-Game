@@ -227,6 +227,7 @@ __|_______|_______|_______|_______|___";
         }
         static void Game()
         {
+            string input, temp;
             int userMorals = int.Parse(userDetails[2]);
             Random rnd = new Random();
             int yearsExperience = rnd.Next(0, 30);
@@ -237,31 +238,11 @@ __|_______|_______|_______|_______|___";
             Wait(500);
             Type($"{userDetails[0]}!");
             if (yearsExperience == 0) Type($"You are a(n) {userDetails[1]}, you've been working in Bellmoral for less than a year, and are still getting to grips with the town, but you feel like you've settled in {GetWord(userMorals, 'V')}.");
-            else Type($"You are a(n) {userDetails[1]}, you've been working in Bellmoral for around {yearsExperience} years. You feel like your presence in the village is {GetWord(userMorals, 'V')}.");
+            else Type($"You are a(n) {userDetails[1]}, you've been working in Bellmoral for around {yearsExperience} years. You feel like you're a {GetWord(userMorals, 'N')} part of the village.");
+            Type3(new string[] { "You find yourself in a ", "forest", ", do you want to go North [N], East [E], South [S], or West [W]?" }, 10, new string[] { "Gray", "Green", "Gray" });
+            Console.WriteLine("");
+            temp = Console.ReadLine();
             
-        }
-        static string GetWord(int userMorals, char type)
-        {
-            Random rnd = new Random();
-            int MoralGroup = (userMorals / 6) + 1; // will give 1, 2 or 3. General grouping (1 = negative, 2 = average, 3 = positive)
-            string nounDesc, verbDesc, compliment;
-            string output = "[GetWord Error]";
-            if (type == 'N') // adjectives (describe Noun)
-            {
-                string[] adjectives = new string[] { "grim", "shoddy", "disgusting", "good", "alright", "average", "nice", "amazing", "awesome" };
-                output = adjectives[rnd.Next((MoralGroup * 3) - 3, MoralGroup * 3)];
-            }
-            if (type == 'V') // adverbs (describe Verb)
-            {
-                string[] adverbs = new string[] { "clumsily", "terribly", "badly", "okay", "acceptably", "averagely", "flawlessly", "expertly", "incredibly" };
-                output = adverbs[rnd.Next((MoralGroup * 3) - 3, MoralGroup * 3)];
-            }
-            if (type == 'P') // place (describe place) 
-            {
-
-            }
-
-            return output;
         }
         static void Setup()
         {
@@ -277,13 +258,13 @@ __|_______|_______|_______|_______|___";
             Wait(500);
             Type3(new string[] { "This is a ", "text based ", "adventure game", "." }, 20, new string[] { "Gray", "Cyan", "Green", "Gray" });
             Console.WriteLine("\n\nBackstory:");
-            Type3(new string[] { "[1]", " Warrior ", "Stats: ", "Strength - 9, Agility - 5, Intelligence - 3, Charisma - 5" }, 20, new string[] { "White", "Red", "Green", "Yellow" });
+            Type3(new string[] { "[1]", " Warrior ", "Stats: ", "Strength - 9, Agility - 5, Intelligence - 3, Charisma - 5" }, 2, new string[] { "White", "Red", "Green", "Yellow" });
             Console.WriteLine("");
-            Type3(new string[] { "[2]", " Archer  ", "Stats: ", "Strength - 7, Agility - 7, Intelligence - 5, Charisma - 5" }, 20, new string[] { "White", "Cyan", "Green", "Yellow" });
+            Type3(new string[] { "[2]", " Archer  ", "Stats: ", "Strength - 7, Agility - 7, Intelligence - 5, Charisma - 5" }, 2, new string[] { "White", "Cyan", "Green", "Yellow" });
             Console.WriteLine("");
-            Type3(new string[] { "[3]", " Rogue   ", "Stats: ", "Strength - 3, Agility - 9, Intelligence - 7, Charisma - 1" }, 20, new string[] { "White", "Blue", "Green", "Yellow" });
+            Type3(new string[] { "[3]", " Rogue   ", "Stats: ", "Strength - 3, Agility - 9, Intelligence - 7, Charisma - 1" }, 2, new string[] { "White", "Blue", "Green", "Yellow" });
             Console.WriteLine("");
-            Type3(new string[] { "[4]", " Bard    ", "Stats: ", "Strength - 2, Agility - 3, Intelligence - 8, Charisma - 8" }, 20, new string[] { "White", "Magenta", "Green", "Yellow" });
+            Type3(new string[] { "[4]", " Bard    ", "Stats: ", "Strength - 2, Agility - 3, Intelligence - 8, Charisma - 8" }, 2, new string[] { "White", "Magenta", "Green", "Yellow" });
             Console.WriteLine("\n");
             //Type2("You could be anything... ", 50);
             //Wait(500);
@@ -295,13 +276,13 @@ __|_______|_______|_______|_______|___";
             //Type2("Archer");
             //Type("...", 250);
             //Wait(1000);
-            Type2("What are you? A(n): ");
+            Type2("Select one (1, 2, 3 or 4): ");
             do
             {
                 do
                 {
                     Console.ResetColor();
-                    Console.Write("\rWhat are you? A(n): ");
+                    Console.Write("\rSelect one (1, 2, 3 or 4): ");
                     Colour("Yellow");
                 } while (!int.TryParse(Console.ReadLine(), out choice));
             } while (choice < 1 || choice > 4);
@@ -327,7 +308,8 @@ __|_______|_______|_______|_______|___";
             Console.ForegroundColor = ConsoleColor.Yellow;
             string temp = Console.ReadLine();
             Wait(500);
-            Type($"You are about to set {temp} as your name, is that correct? Press [ESC] to change it, and [ENTER] to confirm it");
+            Type3(new string[] { "You are about to set ", $"{temp}", " as your name, is that correct? Press ", "[ESC]", " to change it, and", " [ENTER]", " to confirm it" }, 5, new string[] { "Gray", "Yellow", "Gray", "Cyan", "Gray", "White", "Gray"});
+            Console.WriteLine("");
             while (Console.ReadKey().Key != ConsoleKey.Enter)
             {
                 Type3(new string[] { $"And what's your name, my good ", $"{userDetails[1]}", "? " }, 20, new string[] { "Gray", "Yellow", "Gray" });
@@ -335,7 +317,8 @@ __|_______|_______|_______|_______|___";
                 temp = Console.ReadLine();
                 Wait(500);
                 Console.ResetColor();
-                Type($"You are about to set {temp} as your name, is that correct? Press [ESC] to change it, and [ENTER] to confirm it");
+                Type3(new string[] { "You are about to set ", $"{temp}", " as your name, is that correct? Press ", "[ESC]", " to change it, and", " [ENTER]", " to confirm it" }, 5, new string[] { "Gray", "Yellow", "Gray", "Cyan", "Gray", "White", "Gray" });
+                Console.WriteLine("");
             } 
 
             userDetails[0] = temp;
@@ -345,10 +328,11 @@ __|_______|_______|_______|_______|___";
                 do
                 {
                     Console.ResetColor();
-                    Type($"And how do you see yourself morally, {userDetails[0]}, on a scale of 1-17 (1 being evil, 17 being a hero)? (this will affect how NPC's interact with you)");
+                    Type3(new string[] { $"And how do you see yourself morally, ", $"{userDetails[0]}", ", on a scale of 1-17 (1 being evil, 17 being a hero)?", " (this will affect how NPC's interact with you)" }, 2, new string[] { "Gray", "Cyan", "Gray", "White" });
+                    Console.WriteLine("");
                     Console.ForegroundColor = ConsoleColor.Yellow;
                 } while (!int.TryParse(Console.ReadLine(), out userMorals));
-            } while (userMorals > 17 || userMorals < 1) ;
+            } while (userMorals > 17 || userMorals < 1);
             userDetails[2] = $"{userMorals}";
 
             Game();
@@ -383,6 +367,25 @@ __|_______|_______|_______|_______|___";
                 case ConsoleKey.Escape:
                     return;
             }
+        }
+        static string GetWord(int userMorals, char type)
+        {
+            Random rnd = new Random();
+            int MoralGroup = (userMorals / 6) + 1; // will give 1, 2 or 3. General grouping (1 = negative, 2 = average, 3 = positive)
+            string nounDesc, verbDesc, compliment;
+            string output = "[GetWord Error]";
+            if (type == 'N') // adjectives (describe Noun)
+            {
+                string[] adjectives = new string[] { "grim", "shoddy", "disgusting", "good", "alright", "average", "nice", "amazing", "awesome" };
+                output = adjectives[rnd.Next((MoralGroup * 3) - 3, MoralGroup * 3)];
+            }
+            if (type == 'V') // adverbs (describe Verb)
+            {
+                string[] adverbs = new string[] { "clumsily", "terribly", "badly", "okay", "acceptably", "averagely", "flawlessly", "expertly", "incredibly" };
+                output = adverbs[rnd.Next((MoralGroup * 3) - 3, MoralGroup * 3)];
+            }
+
+            return output;
         }
         static void Type(string args, int delay = 20, string colour = "Gray")
         {
