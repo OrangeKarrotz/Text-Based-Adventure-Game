@@ -35,6 +35,18 @@ __|_______|_______|_______|_______|___";
 |______/  /__/     \__\  |__|        |__|     |_______||_______|
                                                                 
 ";
+        static string wheretoAscii = @"
+
+                   _______  _______  _______   _________ _______   _____  
+|\     /||\     /|(  ____ \(  ____ )(  ____ \  \__   __/(  ___  ) / ___ \ 
+| )   ( || )   ( || (    \/| (    )|| (    \/     ) (   | (   ) |( (   ) )
+| | _ | || (___) || (__    | (____)|| (__         | |   | |   | | \/  / / 
+| |( )| ||  ___  ||  __)   |     __)|  __)        | |   | |   | |    ( (  
+| || || || (   ) || (      | (\ (   | (           | |   | |   | |    | |  
+| () () || )   ( || (____/\| ) \ \__| (____/\     | |   | (___) |    (_)  
+(_______)|/     \|(_______/|/   \__/(_______/     )_(   (_______)     _   
+                                                                     (_)  
+";
         static string[] title = new string[] { @"
 
 ._______ ._______.___    .___    ._____.___ ._______  .______  .______  .___    
@@ -263,6 +275,12 @@ __|_______|_______|_______|_______|___";
         }
         static void Whereto()
         {
+            Console.Clear();
+            Colour("Yellow");
+            Console.WriteLine(wheretoAscii);
+            Console.ResetColor();
+            Spacing(1);
+            SetTitle("Whereto");
             Type3(new string[] { "Do you want to go North [N], East [E], South [S], or West [W]?" }, 10, new string[] { "Gray" });
             Console.WriteLine("");
             ConsoleKey temp = Console.ReadKey().Key;
@@ -277,50 +295,50 @@ __|_______|_______|_______|_______|___";
             int[] oldPos = new int[] { userLocation[0], userLocation[1] };
             Type3(new string[] { "Loading environment" }, 50);
             Type("...", 100);
-            switch ((char)temp)
-            {
-                case 'N':
-                    Type3(new string[] { "You attempt to head off ", $"North" }, 10, new string[] { "Gray", "Cyan" });
-                    Console.WriteLine("");
-                    if (userLocation[1] + 1 > 4)
-                    {
-                        Type("You can't go that way.");
-                        Whereto();
-                    }
+            //switch ((char)temp)
+            //{
+            //    case 'N':
+            //        Type3(new string[] { "You attempt to head off ", $"North" }, 10, new string[] { "Gray", "Cyan" });
+            //        Console.WriteLine("");
+            //        if (userLocation[1] + 1 > 4)
+            //        {
+            //            Type("You can't go that way.");
+            //            Whereto();
+            //        }
                     
-                    break;
-                case 'E':
-                    Type3(new string[] { "You attempt to head off ", $"East" }, 10, new string[] { "Gray", "Cyan" });
-                    Console.WriteLine("");
-                    if (userLocation[0] + 1 > 4)
-                    {
-                        Type("You can't go that way.");
-                        Whereto();
-                    }
-                    break;
-                case 'W':
-                    Type3(new string[] { "You attempt to head off ", $"West" }, 10, new string[] { "Gray", "Cyan" });
-                    Console.WriteLine("");
-                    if (userLocation[0] -1 > 4)
-                    {
-                        Type("You can't go that way.");
-                        Whereto();
-                    }
-                    break;
-                case 'S':
-                    Type3(new string[] { "You attempt to head off ", $"South" }, 10, new string[] { "Gray", "Cyan" });
-                    Console.WriteLine("");
-                    if (userLocation[1] -1 > 4)
-                    {
-                        Type("You can't go that way.");
-                        Whereto();
-                    }
-                    break;
-                default:
-                    Console.Clear();
-                    Console.WriteLine("An error has occured. Location: Error 299");
-                    break;
-            }
+            //        break;
+            //    case 'E':
+            //        Type3(new string[] { "You attempt to head off ", $"East" }, 10, new string[] { "Gray", "Cyan" });
+            //        Console.WriteLine("");
+            //        if (userLocation[0] + 1 > 4)
+            //        {
+            //            Type("You can't go that way.");
+            //            Whereto();
+            //        }
+            //        break;
+            //    case 'W':
+            //        Type3(new string[] { "You attempt to head off ", $"West" }, 10, new string[] { "Gray", "Cyan" });
+            //        Console.WriteLine("");
+            //        if (userLocation[0] -1 > 4)
+            //        {
+            //            Type("You can't go that way.");
+            //            Whereto();
+            //        }
+            //        break;
+            //    case 'S':
+            //        Type3(new string[] { "You attempt to head off ", $"South" }, 10, new string[] { "Gray", "Cyan" });
+            //        Console.WriteLine("");
+            //        if (userLocation[1] -1 > 4)
+            //        {
+            //            Type("You can't go that way.");
+            //            Whereto();
+            //        }
+            //        break;
+            //    default:
+            //        Console.Clear();
+            //        Console.WriteLine("An error has occured. Location: Error 299");
+            //        break;
+            //}
             Wait(500);
             switch ((char)temp)
             {
@@ -352,13 +370,9 @@ __|_______|_______|_______|_______|___";
         }
         static void Move(int x, int y)
         {
+            SetTitle("Moving");
             Random rnd = new Random();
             var chance = rnd.NextDouble();
-            if (chance > 0.9)
-            {
-                Type("While on your travles you encountered a BEAR!");
-                Battle("Bear", 15);
-            }
             userLocation[0] = userLocation[0] + x;
             userLocation[1] = userLocation[1] + y;
             if (userLocation[0] == 0 && userLocation[1] == 0)
@@ -380,7 +394,7 @@ __|_______|_______|_______|_______|___";
                 Type("You found nothing valuable :(");
                 Whereto();
             }
-            if (userLocation[0] == 1 && userLocation[1] == 1)
+            if (userLocation[0] == 2 && userLocation[1] == 6)
             {
                 Wait(1000);
                 Console.Clear();
@@ -389,7 +403,7 @@ __|_______|_______|_______|_______|___";
             }
             else
             {
-                Battle("UNKNOWN CREATURE", 5);
+                if (rnd.NextDouble() > 0.8) Battle("Random Encounter", rnd.Next(5, 75));
             }
         }
         static void Locations(string location)
@@ -528,7 +542,7 @@ __|_______|_______|_______|_______|___";
             int userMorals, choice;
             
             Console.Clear();
-            SetTitle("Playing");
+            SetTitle("Set Up");
             Console.ResetColor();
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine(title[0]);
@@ -631,7 +645,7 @@ __|_______|_______|_______|_______|___";
             Console.ResetColor();
             if (glitchMenu) Console.WriteLine($"Menu: 'Glitched' Menu");
             if (!glitchMenu) Console.WriteLine($"Menu: Regular Menu");
-            Console.WriteLine("Mode: Sandbox [experimental]");
+            Console.WriteLine("Mode: Escape [experimental] <- Aim for Position (2, 6)");
             Spacing(1);
             Console.ForegroundColor = ConsoleColor.Yellow;
             Type("Controls:");
@@ -725,8 +739,8 @@ __|_______|_______|_______|_______|___";
         static void SetTitle(string args)
         {
             //set title
-            string Progressbar = $"Text Based Adventure Game: {args}";
-            var title = "Text Based Adventure Game:";
+            string Progressbar = $"Pos[{userLocation[0]}, {userLocation[1]}] Text Based Adventure Game: {args}";
+            var title = $"Pos[{userLocation[0]}, {userLocation[1]}] Text Based Adventure Game:";
             int temp = title.Length;
             while (true)
             {
