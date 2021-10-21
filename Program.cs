@@ -13,6 +13,7 @@ namespace Text_Based_Adventure_Game
         static bool playing = true;
         static bool glitchMenu = true;
         static string[] userDetails = new string[4];
+        static int[] userLocation = new int[] { 0, 0 };
         #region Ascii
         static string dogAscii = @"
             |\_/|        D\___/\
@@ -20,6 +21,16 @@ namespace Text_Based_Adventure_Game
            ==(Y)==         (V)
 ----------(u)---(u)----oOo--U--oOo---
 __|_______|_______|_______|_______|___";
+        static string battleAscii = @"
+
+.______        ___   .___________.___________. __       _______ 
+|   _  \      /   \  |           |           ||  |     |   ____|
+|  |_)  |    /  ^  \ `---|  |----`---|  |----`|  |     |  |__   
+|   _  <    /  /_\  \    |  |        |  |     |  |     |   __|  
+|  |_)  |  /  _____  \   |  |        |  |     |  `----.|  |____ 
+|______/  /__/     \__\  |__|        |__|     |_______||_______|
+                                                                
+";
         static string[] title = new string[] { @"
 
 ._______ ._______.___    .___    ._____.___ ._______  .______  .______  .___    
@@ -225,9 +236,9 @@ __|_______|_______|_______|_______|___";
                     return;
             }
         }
-        static void Game()
+        static void Game_Start()
         {
-            string input, temp;
+            SetTitle("Game_Start");
             int userMorals = int.Parse(userDetails[2]);
             Random rnd = new Random();
             int yearsExperience = rnd.Next(0, 30);
@@ -236,12 +247,187 @@ __|_______|_______|_______|_______|___";
             Console.SetCursorPosition(0, 15);
             Type2("Welcome to the game, ");
             Wait(500);
+            Colour("Yellow");
             Type($"{userDetails[0]}!");
+            Console.ResetColor();
             if (yearsExperience == 0) Type($"You are a(n) {userDetails[1]}, you've been working in Bellmoral for less than a year, and are still getting to grips with the town, but you feel like you've settled in {GetWord(userMorals, 'V')}.");
-            else Type($"You are a(n) {userDetails[1]}, you've been working in Bellmoral for around {yearsExperience} years. You feel like you're a {GetWord(userMorals, 'N')} part of the village.");
-            Type3(new string[] { "You find yourself in a ", "forest", ", do you want to go North [N], East [E], South [S], or West [W]?" }, 10, new string[] { "Gray", "Green", "Gray" });
+            else Type($"You are a(n) {userDetails[1]}, you've been working in Bellmoral for around {yearsExperience} years. You feel like you're a(n) {GetWord(userMorals, 'N')} part of the village.");
+            Wait(1000);
+            Type("Good luck on your adventures!");
+            Wait(2000);
+            Whereto();
+        }
+        static void Whereto()
+        {
+            Type3(new string[] { "Do you want to go North [N], East [E], South [S], or West [W]?" }, 10, new string[] { "Gray" });
             Console.WriteLine("");
-            temp = Console.ReadLine();
+            ConsoleKey temp = Console.ReadKey().Key;
+            while (temp != ConsoleKey.N && temp != ConsoleKey.E && temp != ConsoleKey.S && temp != ConsoleKey.W)
+            {
+                Console.WriteLine("Enter a valid input.");
+                Type3(new string[] { "Do you want to go North [N], East [E], South [S], or West [W]?" }, 10, new string[] { "Gray" });
+                Console.WriteLine("");
+                temp = Console.ReadKey().Key;
+            }
+            int[] oldPos = new int[] { userLocation[0], userLocation[1] };
+            Type3(new string[] { "Loading environment" }, 50);
+            Type("...", 100);
+            switch ((char)temp)
+            {
+                case 'N':
+                    Type3(new string[] { "You attempt to head off ", $"North" }, 10, new string[] { "Gray", "Cyan" });
+                    if (++userLocation[1] > 2) Type("You can't go that way.");
+                    Whereto();
+                    break;
+                case 'E':
+                    Type3(new string[] { "You attempt to head off ", $"East" }, 10, new string[] { "Gray", "Cyan" });
+                    if (++userLocation[0] > 2) Type("You can't go that way.");
+                    Whereto();
+                    break;
+                case 'W':
+                    Type3(new string[] { "You attempt to head off ", $"West" }, 10, new string[] { "Gray", "Cyan" });
+                    if (--userLocation[0] > 2) Type("You can't go that way.");
+                    Whereto();
+                    break;
+                case 'S':
+                    Type3(new string[] { "You attempt to head off ", $"South" }, 10, new string[] { "Gray", "Cyan" });
+                    if (--userLocation[1] > 2) Type("You can't go that way.");
+                    Whereto();
+                    break;
+                default:
+                    Console.Clear();
+                    Console.WriteLine("An error has occured. Location: Error 1");
+                    break;
+            }
+            Wait(500);
+            switch ((char)temp)
+            {
+                case 'N':
+                    Type3(new string[] { "You head off ", $"North" }, 10, new string[] { "Gray", "Cyan" });
+                    Move(0, 1);
+                    break;
+                case 'E':
+                    Type3(new string[] { "You head off ", $"East" }, 10, new string[] { "Gray", "Cyan" });
+                    Move(1, 0);
+                    break;
+                case 'W':
+                    Type3(new string[] { "You head off ", $"West" }, 10, new string[] { "Gray", "Cyan" });
+                    Move(-1, 0);
+                    break;
+                case 'S':
+                    Type3(new string[] { "You head off ", $"South" }, 10, new string[] { "Gray", "Cyan" });
+                    Move(0, -1);
+                    break;
+                default:
+                    Console.Clear();
+                    Console.WriteLine("An error has occured. Location: Error 1");
+                    break;
+            }
+        }
+        static void Move(int x, int y)
+        {
+            Random rnd = new Random();
+            var chance = rnd.NextDouble();
+            if (chance > 0.9)
+            {
+                Type("While on your travles you encountered a BEAR!");
+                Battle("Bear", 15);
+            }
+            userLocation[0] = userLocation[0] + x;
+            userLocation[1] = userLocation[1] + y;
+            
+            if (userLocation == new int[] { 0, 1 }) 
+            {
+                Locations("Forest");
+            }
+            if (userLocation == new int[] { -1, 0 })
+            {
+                Type("You've found a secret cabin! You clear it out and look for something valuable...");
+                Wait(500);
+                Type("You found nothing valuable :(");
+                Whereto();
+            }
+
+        }
+        static void Locations(string location)
+        {
+            if (location == "Forest")
+            {
+                Type("You are in a forest.");
+                Whereto();
+            }
+        }
+        static void Battle(string enemy, int difficulty)
+        {
+            Random rnd = new Random();
+            int health = difficulty;
+            int userClass = int.Parse(userDetails[3]);
+
+            SetTitle("In a Battle");
+            Console.Clear();
+            Console.WriteLine(battleAscii);
+            Spacing(1);
+            Type3(new string[] { "You are now engaged in a ", "battle ", "with a ", $"[", "{enemy}", "]" }, 20, new string[] { "Gray", "Red", "Gray", "Red", "White", "Red" });
+            Console.WriteLine($"Enemy Health: {health}");
+            Spacing(2);
+            Type("Options:", 0, "White");
+            Console.WriteLine("  (1) Attack [ENTER]");
+            Console.WriteLine("  (2) Flee [ANY]");
+            if (Console.ReadKey().Key == ConsoleKey.Enter)
+            {
+                Attack(health, userClass);
+            }
+            else
+            {
+                Type($"You attempt to flee the enemy!");
+                double chance = rnd.NextDouble();
+                Wait(250);
+                if (chance > 0.8)
+                {
+                    int directionNum = rnd.Next(1, 5);
+                    string direction = "[unset - error342]";
+                    
+                    switch (directionNum)
+                    {
+                        case 1:
+                            direction = "North";
+                            break;
+                        case 2:
+                            direction = "East";
+                            break;
+                        case 3:
+                            direction = "South";
+                            break;
+                        case 4:
+                            direction = "West";
+                            break;
+                    }
+                    
+                    Type($"You escape to the {direction}");
+                    switch (directionNum)
+                    {
+                        case 1:
+                            direction = "North";
+                            Move(0,1);
+                            break;
+                        case 2:
+                            direction = "East";
+                            Move(1, 0);
+                            break;
+                        case 3:
+                            direction = "South";
+                            Move(0, -1);
+                            break;
+                        case 4:
+                            direction = "West";
+                            Move(-1, 0);
+                            break;
+                    }
+                }
+            }
+        }
+        static void Attack(int enemyHealth, int userClass)
+        {
             
         }
         static void Setup()
@@ -286,7 +472,9 @@ __|_______|_______|_______|_______|___";
                     Colour("Yellow");
                 } while (!int.TryParse(Console.ReadLine(), out choice));
             } while (choice < 1 || choice > 4);
-            
+
+            userDetails[3] = choice.ToString();
+
             switch (choice)
             {
                 case 1:
@@ -328,14 +516,14 @@ __|_______|_______|_______|_______|___";
                 do
                 {
                     Console.ResetColor();
-                    Type3(new string[] { $"And how do you see yourself morally, ", $"{userDetails[0]}", ", on a scale of 1-17 (1 being evil, 17 being a hero)?", " (this will affect how NPC's interact with you)" }, 2, new string[] { "Gray", "Cyan", "Gray", "White" });
+                    Type3(new string[] { $"And how do you see yourself morally, ", $"{userDetails[0]}", ", on a scale of 1-17 (1 being evil, 17 being a hero)?", " (this will affect how NPC's interact with you)" }, 2, new string[] { "Gray", "Yellow", "Gray", "White" });
                     Console.WriteLine("");
                     Console.ForegroundColor = ConsoleColor.Yellow;
                 } while (!int.TryParse(Console.ReadLine(), out userMorals));
             } while (userMorals > 17 || userMorals < 1);
             userDetails[2] = $"{userMorals}";
 
-            Game();
+            Game_Start();
             //Console.ReadKey();
         }
         static void Options()
