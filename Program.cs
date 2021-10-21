@@ -14,6 +14,10 @@ namespace Text_Based_Adventure_Game
         static bool glitchMenu = true;
         static string[] userDetails = new string[4];
         static int[] userLocation = new int[] { 0, 0 };
+        static int[] classStrength = new int[] { 9, 7, 3, 2 };
+        static int[] classAgility = new int[] { 5, 7, 9, 3 };
+        static int[] classIntell = new int[] { 3, 5, 7, 8 };
+        static int[] classChar = new int[] { 5, 5, 1, 8 };
         #region Ascii
         static string dogAscii = @"
             |\_/|        D\___/\
@@ -269,6 +273,7 @@ __|_______|_______|_______|_______|___";
                 Console.WriteLine("");
                 temp = Console.ReadKey().Key;
             }
+            Console.WriteLine("\r=> ");
             int[] oldPos = new int[] { userLocation[0], userLocation[1] };
             Type3(new string[] { "Loading environment" }, 50);
             Type("...", 100);
@@ -276,27 +281,44 @@ __|_______|_______|_______|_______|___";
             {
                 case 'N':
                     Type3(new string[] { "You attempt to head off ", $"North" }, 10, new string[] { "Gray", "Cyan" });
-                    if (++userLocation[1] > 2) Type("You can't go that way.");
-                    Whereto();
+                    Console.WriteLine("");
+                    if (userLocation[1] + 1 > 4)
+                    {
+                        Type("You can't go that way.");
+                        Whereto();
+                    }
+                    
                     break;
                 case 'E':
                     Type3(new string[] { "You attempt to head off ", $"East" }, 10, new string[] { "Gray", "Cyan" });
-                    if (++userLocation[0] > 2) Type("You can't go that way.");
-                    Whereto();
+                    Console.WriteLine("");
+                    if (userLocation[0] + 1 > 4)
+                    {
+                        Type("You can't go that way.");
+                        Whereto();
+                    }
                     break;
                 case 'W':
                     Type3(new string[] { "You attempt to head off ", $"West" }, 10, new string[] { "Gray", "Cyan" });
-                    if (--userLocation[0] > 2) Type("You can't go that way.");
-                    Whereto();
+                    Console.WriteLine("");
+                    if (userLocation[0] -1 > 4)
+                    {
+                        Type("You can't go that way.");
+                        Whereto();
+                    }
                     break;
                 case 'S':
                     Type3(new string[] { "You attempt to head off ", $"South" }, 10, new string[] { "Gray", "Cyan" });
-                    if (--userLocation[1] > 2) Type("You can't go that way.");
-                    Whereto();
+                    Console.WriteLine("");
+                    if (userLocation[1] -1 > 4)
+                    {
+                        Type("You can't go that way.");
+                        Whereto();
+                    }
                     break;
                 default:
                     Console.Clear();
-                    Console.WriteLine("An error has occured. Location: Error 1");
+                    Console.WriteLine("An error has occured. Location: Error 299");
                     break;
             }
             Wait(500);
@@ -304,18 +326,22 @@ __|_______|_______|_______|_______|___";
             {
                 case 'N':
                     Type3(new string[] { "You head off ", $"North" }, 10, new string[] { "Gray", "Cyan" });
+                    Console.WriteLine("");
                     Move(0, 1);
                     break;
                 case 'E':
                     Type3(new string[] { "You head off ", $"East" }, 10, new string[] { "Gray", "Cyan" });
+                    Console.WriteLine("");
                     Move(1, 0);
                     break;
                 case 'W':
                     Type3(new string[] { "You head off ", $"West" }, 10, new string[] { "Gray", "Cyan" });
+                    Console.WriteLine("");
                     Move(-1, 0);
                     break;
                 case 'S':
                     Type3(new string[] { "You head off ", $"South" }, 10, new string[] { "Gray", "Cyan" });
+                    Console.WriteLine("");
                     Move(0, -1);
                     break;
                 default:
@@ -335,19 +361,36 @@ __|_______|_______|_______|_______|___";
             }
             userLocation[0] = userLocation[0] + x;
             userLocation[1] = userLocation[1] + y;
-            
-            if (userLocation == new int[] { 0, 1 }) 
+            if (userLocation[0] == 0 && userLocation[1] == 0)
+            {
+                Type("You've made it back to the start! You can quit from here by pressing [ESC]. Pressing anything else will result in you moving on");
+                if (Console.ReadKey().Key == ConsoleKey.Escape)
+                {
+                    Exit();
+                }
+            }
+            if (userLocation[0] == 0 && userLocation[1] == 1) 
             {
                 Locations("Forest");
             }
-            if (userLocation == new int[] { -1, 0 })
+            if (userLocation[0] == -1 && userLocation[1] == 0)
             {
                 Type("You've found a secret cabin! You clear it out and look for something valuable...");
                 Wait(500);
                 Type("You found nothing valuable :(");
                 Whereto();
             }
-
+            if (userLocation[0] == 1 && userLocation[1] == 1)
+            {
+                Wait(1000);
+                Console.Clear();
+                Type("You made it out the forest alive! Congrats!");
+                Wait(1000);
+            }
+            else
+            {
+                Battle("UNKNOWN CREATURE", 5);
+            }
         }
         static void Locations(string location)
         {
@@ -360,75 +403,125 @@ __|_______|_______|_______|_______|___";
         static void Battle(string enemy, int difficulty)
         {
             Random rnd = new Random();
-            int health = difficulty;
+            int enemyHealth = difficulty;
             int userClass = int.Parse(userDetails[3]);
+            int userHealth = 100 + (20 * classStrength[userClass-1]);
 
             SetTitle("In a Battle");
-            Console.Clear();
-            Console.WriteLine(battleAscii);
-            Spacing(1);
-            Type3(new string[] { "You are now engaged in a ", "battle ", "with a ", $"[", "{enemy}", "]" }, 20, new string[] { "Gray", "Red", "Gray", "Red", "White", "Red" });
-            Console.WriteLine($"Enemy Health: {health}");
-            Spacing(2);
-            Type("Options:", 0, "White");
-            Console.WriteLine("  (1) Attack [ENTER]");
-            Console.WriteLine("  (2) Flee [ANY]");
-            if (Console.ReadKey().Key == ConsoleKey.Enter)
+            while (userHealth > 0 && enemyHealth > 0)
             {
-                Attack(health, userClass);
+                Console.Clear();
+                Console.WriteLine(battleAscii);
+                Spacing(1);
+                Type3(new string[] { "You are now engaged in a ", "battle ", "with a ", "[", $"{enemy}", "]" }, 20, new string[] { "Gray", "Red", "Gray", "Red", "White", "Red" });
+                Console.WriteLine("");
+                Console.WriteLine($"Enemy Health: {enemyHealth}");
+                Console.WriteLine($"Your Health: {userHealth}");
+                Spacing(2);
+                Type("Options:", 0, "White");
+                Console.WriteLine("  (1) Attack [ENTER]");
+                Console.WriteLine("  (2) Flee [ANY]");
+                if (Console.ReadKey().Key == ConsoleKey.Enter)
+                {
+                    int damageDealt = Attack(enemyHealth, userClass);
+                    enemyHealth -= damageDealt;
+                    Console.WriteLine($"You dealt {damageDealt} points of damage");
+                    Wait(1000);
+                    int enemyDamageDealt = enemyAttack();
+                    Type($"The {enemy} fought back, dealing {enemyDamageDealt} points of damage");
+                    userHealth -= enemyDamageDealt;
+                }     
+                else
+                {
+                    Type($"You attempt to flee the enemy!");
+                    double chance = rnd.NextDouble();
+                    Wait(1000);
+                    if (chance > 0.8)
+                    {
+                        int directionNum = rnd.Next(1, 5);
+                        string direction = "[unset - error342]";
+
+                        switch (directionNum)
+                        {
+                            case 1:
+                                direction = "North";
+                                break;
+                            case 2:
+                                direction = "East";
+                                break;
+                            case 3:
+                                direction = "South";
+                                break;
+                            case 4:
+                                direction = "West";
+                                break;
+                        }
+
+                        Type($"You escape to the {direction}");
+                        Console.Write("Press enter to continue\n");
+                        Console.ReadLine();
+                        switch (directionNum)
+                        {
+                            case 1:
+                                direction = "North";
+                                Move(0, 1);
+                                break;
+                            case 2:
+                                direction = "East";
+                                Move(1, 0);
+                                break;
+                            case 3:
+                                direction = "South";
+                                Move(0, -1);
+                                break;
+                            case 4:
+                                direction = "West";
+                                Move(-1, 0);
+                                break;
+                        }
+                    }
+                    
+                }
+            }
+            if (userHealth > enemyHealth)
+            {
+                Console.Clear();
+                Colour("Green");
+                Console.WriteLine(battleAscii);
+                Wait(1000);
+                Console.Clear();
+                Console.WriteLine(title[0]);
+                Console.ResetColor();
+
+                Type("You won!");
+                Wait(500);
+                Whereto();
             }
             else
             {
-                Type($"You attempt to flee the enemy!");
-                double chance = rnd.NextDouble();
-                Wait(250);
-                if (chance > 0.8)
-                {
-                    int directionNum = rnd.Next(1, 5);
-                    string direction = "[unset - error342]";
-                    
-                    switch (directionNum)
-                    {
-                        case 1:
-                            direction = "North";
-                            break;
-                        case 2:
-                            direction = "East";
-                            break;
-                        case 3:
-                            direction = "South";
-                            break;
-                        case 4:
-                            direction = "West";
-                            break;
-                    }
-                    
-                    Type($"You escape to the {direction}");
-                    switch (directionNum)
-                    {
-                        case 1:
-                            direction = "North";
-                            Move(0,1);
-                            break;
-                        case 2:
-                            direction = "East";
-                            Move(1, 0);
-                            break;
-                        case 3:
-                            direction = "South";
-                            Move(0, -1);
-                            break;
-                        case 4:
-                            direction = "West";
-                            Move(-1, 0);
-                            break;
-                    }
-                }
+                Death();
             }
         }
-        static void Attack(int enemyHealth, int userClass)
+        static int Attack(int enemyHealth, int userClass)
         {
-            
+            int damage = 5;
+            Random rnd = new Random();
+            double critChance = rnd.NextDouble();
+
+            damage += classStrength[userClass - 1];
+            if (critChance > 0.7) damage += damage * 2;
+            if (critChance < 0.1) damage = damage / 2;
+            return damage;
+        }
+        static int enemyAttack()
+        {
+            int damage = 1;
+            Random rnd = new Random();
+            rnd.Next(1, 10);
+            double critChance = rnd.NextDouble();
+            if (critChance > 0.9) damage += damage * 2;
+            if (critChance < 0.3) damage = damage / 2;
+            return damage;
         }
         static void Setup()
         {
@@ -538,6 +631,7 @@ __|_______|_______|_______|_______|___";
             Console.ResetColor();
             if (glitchMenu) Console.WriteLine($"Menu: 'Glitched' Menu");
             if (!glitchMenu) Console.WriteLine($"Menu: Regular Menu");
+            Console.WriteLine("Mode: Sandbox [experimental]");
             Spacing(1);
             Console.ForegroundColor = ConsoleColor.Yellow;
             Type("Controls:");
@@ -555,6 +649,13 @@ __|_______|_______|_______|_______|___";
                 case ConsoleKey.Escape:
                     return;
             }
+        }
+        static void Death()
+        {
+            Console.Clear();
+            WriteCentre("t50", "Red", "You are dead.");
+            Wait(1000);
+            Exit();
         }
         static string GetWord(int userMorals, char type)
         {
@@ -608,6 +709,7 @@ __|_______|_______|_______|_______|___";
             Console.ForegroundColor = ConsoleColor.Red;
             WriteCentre("t50", "Red", "Exitting...");
             Thread.Sleep(1000);
+            Environment.Exit(0);
         }
         static void Spacing(int lines)
         {
