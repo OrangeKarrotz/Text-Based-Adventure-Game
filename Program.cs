@@ -12,6 +12,8 @@ namespace Text_Based_Adventure_Game
         #region GlobalVariables
         static bool playing = true;
         static bool glitchMenu = true;
+        static bool inGame = false;
+        static bool dragonHappened = false;
         static string[] userDetails = new string[4];
         static int[] userLocation = new int[] { 0, 0 };
         static int[] classStrength = new int[] { 9, 7, 3, 2 };
@@ -124,6 +126,7 @@ __|_______|_______|_______|_______|___";
             SetTitle("Starting...");
             do
             {
+                if (inGame) Whereto();
                 if (glitchMenu) TitleGlitch();
                 else MainMenu();
             } while (playing);
@@ -271,7 +274,7 @@ __|_______|_______|_______|_______|___";
             Wait(1000);
             Type("Good luck on your adventures!");
             Wait(2000);
-            Whereto();
+            inGame = true;
         }
         static void Whereto()
         {
@@ -397,13 +400,26 @@ __|_______|_______|_______|_______|___";
             if (userLocation[0] == 2 && userLocation[1] == 6)
             {
                 Wait(1000);
+                if (dragonHappened == false) Battle("Boss Dragon", rnd.Next(150, 501));
+                else Type("You've already defeated the dragon!!");
+                Wait(1000);
                 Console.Clear();
                 Type("You made it out the forest alive! Congrats!");
                 Wait(1000);
+                userLocation[0] = 0;
+                userLocation[1] = 0;
+                inGame = false;
             }
             else
             {
-                if (rnd.NextDouble() > 0.8) Battle("Random Encounter", rnd.Next(5, 75));
+                double chanceOfBattle = rnd.NextDouble();
+                if (chanceOfBattle > 0.8) Battle("Random Encounter", rnd.Next(5, 75));
+                if (chanceOfBattle < 0.05) 
+                {
+                    Battle("Boss Dragon", rnd.Next(150, 501));
+                    dragonHappened = true;
+                }
+                else Whereto();
             }
         }
         static void Locations(string location)
@@ -441,6 +457,7 @@ __|_______|_______|_______|_______|___";
                     enemyHealth -= damageDealt;
                     Console.WriteLine($"You dealt {damageDealt} points of damage");
                     Wait(1000);
+                    if (enemyHealth < 1) break;
                     int enemyDamageDealt = enemyAttack();
                     Type($"The {enemy} fought back, dealing {enemyDamageDealt} points of damage");
                     userHealth -= enemyDamageDealt;
@@ -509,7 +526,6 @@ __|_______|_______|_______|_______|___";
 
                 Type("You won!");
                 Wait(500);
-                Whereto();
             }
             else
             {
@@ -529,10 +545,11 @@ __|_______|_______|_______|_______|___";
         }
         static int enemyAttack()
         {
-            int damage = 1;
+            int damage = 10;
             Random rnd = new Random();
-            rnd.Next(1, 10);
+            int additionalDamage = rnd.Next(1, 50);
             double critChance = rnd.NextDouble();
+            damage += additionalDamage;
             if (critChance > 0.9) damage += damage * 2;
             if (critChance < 0.3) damage = damage / 2;
             return damage;
