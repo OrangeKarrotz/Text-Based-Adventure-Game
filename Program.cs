@@ -9,6 +9,7 @@ namespace Text_Based_Adventure_Game
 {
     class Program
     {
+        //looking swag tom
         #region GlobalVariables
         static bool playing = true;
         static bool glitchMenu = true;
